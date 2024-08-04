@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeModule } from './employee/employee.module';
+import { OrderModule } from './order/order.module';
 
 @Global()
 @Module({
@@ -15,6 +16,7 @@ import { EmployeeModule } from './employee/employee.module';
     UserModule,
     AuthModule,
     EmployeeModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
