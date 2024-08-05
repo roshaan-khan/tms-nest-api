@@ -2,8 +2,8 @@ import { Controller, Post, UsePipes, Body, ConflictException, NotFoundException 
 import { AuthService } from './auth.service';
 import { User } from 'src/schemas/user.schema';
 import { JoiValidationPipe } from 'src/pipe/joi-validation.pipe';
-import { CreateUserSchema, loginUserSchema } from 'src/user/user.dto';
-import { UserService } from 'src/user/user.service';
+import { CreateUserSchema, loginUserSchema } from 'src/modules/user/user.dto';
+import { UserService } from 'src/modules/user/user.service';
 
 @Controller('auth')
 export class AuthController {

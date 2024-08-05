@@ -1,6 +1,6 @@
 import * as Joi from "joi";
 import { eClothType, eOrderStatus } from "src/types/common.enum";
-import Utils from '../utils'
+import Utils from '../../utils'
 import { Order } from "src/schemas/order.schema";
 
 const quantityAndTotalAmountSchema = {
