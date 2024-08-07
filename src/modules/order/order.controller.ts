@@ -10,7 +10,7 @@ import { Types } from 'mongoose';
 @UseGuards(JwtAuthGuard)
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post()
   @UsePipes(new JoiValidationPipe(orderSchema))
@@ -21,8 +21,13 @@ export class OrderController {
   }
 
   @Get()
-  async findAll() {
-    return await this.orderService.findAll();
+  async findAll(@Req() req: Request) {
+    const status = req.query.status;
+    const offset = Number(req.query.offSet) || 10;
+    const page = Number(req.query.page) || 1;
+
+    const query = status ? { status } : {};
+    return await this.orderService.findAll(query, { offset, page });
   }
 
   @Get(':id')
