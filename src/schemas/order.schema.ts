@@ -32,7 +32,7 @@ export class Order {
     status: string;
 
     @Prop({ type: Types.ObjectId, required: true, ref: COLLECTION.CUSTOMER })
-    customer: string;
+    customer: Types.ObjectId;
 
     @Prop({ type: Array<string>, required: false, default: [] })
     designCodes: Array<string>;

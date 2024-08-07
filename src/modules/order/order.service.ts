@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { Customer } from 'src/schemas/customer.schema';
 import { Order } from 'src/schemas/order.schema';
 import { Stock } from 'src/schemas/stock.schema';
@@ -22,6 +22,9 @@ export class OrderService {
 
     const orderCount = await this.orderModel.countDocuments({ user: createOrderDto.user });
     createOrderDto.orderNumber = `ORD-${(orderCount + 1).toString().padStart(4, '0')}`;
+    createOrderDto.user = new Types.ObjectId(createOrderDto.user);
+    createOrderDto.assignedLabor = new Types.ObjectId(createOrderDto.assignedLabor);
+    createOrderDto.customer = new Types.ObjectId(createOrderDto.user);
 
     const clothTypes = [...Object.values(eClothType)];
     clothTypes.forEach((type) => {
@@ -79,6 +82,9 @@ export class OrderService {
 
     const { stocks } = updateOrderDto;
     const clothTypes = [...Object.values(eClothType)];
+    updateOrderDto.user = new Types.ObjectId(updateOrderDto.user);
+    updateOrderDto.assignedLabor = new Types.ObjectId(updateOrderDto.assignedLabor);
+    updateOrderDto.customer = new Types.ObjectId(updateOrderDto.user);
 
     const sizes = {}
 
@@ -111,6 +117,10 @@ export class OrderService {
     ])
 
     return result
+  }
+
+  async updateStatus(id: string, status: Order['status']) {
+    return await this.orderModel.findByIdAndUpdate(id, { status }, { new: true });
   }
 
   async remove(id: number) {

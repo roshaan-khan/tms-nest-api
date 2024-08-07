@@ -1,10 +1,9 @@
 import { Controller, Get, Post, Body, Param, Delete, UseGuards, UsePipes, Req, Put, NotFoundException } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
-import { orderSchema } from './order.dto';
+import { orderSchema, updateOrderSchema, updateOrderStatusSchema } from './order.dto';
 import { JoiValidationPipe } from 'src/pipe/joi-validation.pipe';
 import { Order } from 'src/schemas/order.schema';
-import Utils from 'src/utils';
 import { Request } from 'express';
 import { Types } from 'mongoose';
 @UseGuards(JwtAuthGuard)
@@ -36,7 +35,8 @@ export class OrderController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateOrderDto: any, @Req() req: Request) {
+  @UsePipes(new JoiValidationPipe(updateOrderSchema))
+  async update(@Param('id') id: string, @Body() updateOrderDto: Order, @Req() req: Request) {
     const updatedOrder = await this.orderService.update(id, updateOrderDto, req.user.uid);
 
     if (!updatedOrder) {
@@ -44,6 +44,18 @@ export class OrderController {
     }
 
     return { msg: 'Order updated successfully', updatedOrder };
+  }
+
+  @Put('status/:id')
+  @UsePipes(new JoiValidationPipe(updateOrderStatusSchema))
+  async updateStatus(@Param('id') id: string, @Body() body: { status: Order['status']}, @Req() req: Request) {
+    const updatedOrder = await this.orderService.updateStatus(id, body.status);
+
+    if (!updatedOrder) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { msg: 'Status updated successfully', updatedOrder };
   }
 
   @Delete(':id')

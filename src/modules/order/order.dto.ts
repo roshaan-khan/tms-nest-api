@@ -92,3 +92,13 @@ const schema = {
 
 export const orderSchema = Joi.object<Order>(schema);
 
+export const updateOrderSchema = Joi.object<Order>({
+    ...schema,
+    orderNumber: Joi.string().optional().allow("", null),
+    user: Utils.checkValidMongoIdWithReq().optional().allow("", null),
+    clothType: Joi.array().items(Joi.string().valid(...Object.values(eClothType))).optional().allow("", null),
+})
+
+export const updateOrderStatusSchema = Joi.object({
+    status: Joi.string().required().valid(...Object.values(eOrderStatus))
+})
