@@ -1,10 +1,11 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Customer } from 'src/schemas/customer.schema';
 import { Order } from 'src/schemas/order.schema';
 import { Stock } from 'src/schemas/stock.schema';
 import { eClothType } from 'src/types/common.enum';
+import { IContext } from 'src/types/common.interface';
 import { AVG_CLOTH_DEDUCTION_AMOUNT } from 'src/types/common.utils';
 
 @Injectable()
@@ -18,6 +19,9 @@ export class OrderService {
     const { stocks } = createOrderDto;
 
     const sizes = {}
+
+    const orderCount = await this.orderModel.countDocuments({ user: createOrderDto.user });
+    createOrderDto.orderNumber = `ORD-${(orderCount + 1).toString().padStart(4, '0')}`;
 
     const clothTypes = [...Object.values(eClothType)];
     clothTypes.forEach((type) => {
@@ -51,16 +55,62 @@ export class OrderService {
     return result
   }
 
-  async findAll() {
-    return `This action returns all order`;
+  async findAll(filter?: FilterQuery<Order>, context?: IContext) {
+    const { offset, page } = context;
+    const skip = offset * page - offset;
+
+    const [orders, total] = await Promise.all([
+      this.orderModel.find(filter).limit(offset).skip(skip).lean(),
+      this.orderModel.countDocuments(filter)
+    ]);
+
+    return { orders, total }
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string) {
+    return await this.orderModel.findById(id);
   }
 
-  async update(id: number, updateOrderDto: Order) {
-    return `This action updates a #${id} order`;
+  async update(id: string, updateOrderDto: Order, userId: string) {
+
+    if (String(updateOrderDto.user) !== userId) {
+      throw new ForbiddenException(403, `You are not allowed to update this Order`);
+    }
+
+    const { stocks } = updateOrderDto;
+    const clothTypes = [...Object.values(eClothType)];
+
+    const sizes = {}
+
+    clothTypes.forEach((type) => {
+      if (!updateOrderDto[type]) return
+      sizes[type] = { ...updateOrderDto[type] }
+      delete sizes[type].quantity
+      delete sizes[type].total_amount
+    })
+
+    if (stocks.length > 0) {
+      for (const stock of stocks) {
+        const stockData = await this.stockModel.findById(stock);
+
+        if (!stockData) {
+          throw new NotFoundException(404, `Stock Not Found`);
+        }
+
+        if (stockData.quantity < AVG_CLOTH_DEDUCTION_AMOUNT[stockData.category]) {
+          throw new ForbiddenException(400, `Stock ${stockData.name} is below threshold`);
+        }
+
+        await this.stockModel.findByIdAndUpdate(stock, { $inc: { quantity: -AVG_CLOTH_DEDUCTION_AMOUNT[stockData.category] } }, { new: true });
+      }
+    }
+
+    const [result] = await Promise.all([
+      this.orderModel.findByIdAndUpdate(id, updateOrderDto, { new: true }),
+      this.customerModel.findByIdAndUpdate(updateOrderDto.customer, { sizes }, { new: true })
+    ])
+
+    return result
   }
 
   async remove(id: number) {

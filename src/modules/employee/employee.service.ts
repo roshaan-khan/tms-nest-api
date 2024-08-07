@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { Employee } from 'src/schemas/employee.schema';
+import { IContext } from 'src/types/common.interface';
 
 @Injectable()
 export class EmployeeService {
@@ -10,9 +11,11 @@ export class EmployeeService {
     return this.employeeModel.create(createEmployeeDto);
   }
 
-  async findAll(filter?: FilterQuery<Employee>, offSet?: number, skip?: number) {
+  async findAll(filter?: FilterQuery<Employee>, context?: IContext) {
+    const { offset, page } = context;
+    const skip = offset * page - offset;
     const [employees, total] = await Promise.all([
-      this.employeeModel.find(filter).limit(offSet).skip(skip).lean(),
+      this.employeeModel.find(filter).limit(offset).skip(skip).lean(),
       this.employeeModel.countDocuments(filter)
     ]);
 

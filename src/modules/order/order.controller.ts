@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, UsePipes, Req, Put, NotFoundException } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 import { orderSchema } from './order.dto';
@@ -15,9 +15,9 @@ export class OrderController {
   @Post()
   @UsePipes(new JoiValidationPipe(orderSchema))
   async create(@Body() createOrderDto: Order, @Req() req: Request) {
-    createOrderDto.orderNumber = Utils.generateRandomNumber(1000, 9999).toString();
     createOrderDto.user = new Types.ObjectId(req.user.uid);
-    return await this.orderService.create(createOrderDto);
+    const order = await this.orderService.create(createOrderDto);
+    return { msg: 'Order created successfully', order };
   }
 
   @Get()
@@ -27,12 +27,18 @@ export class OrderController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.orderService.findOne(+id);
+    return await this.orderService.findOne(id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateOrderDto: any) {
-    return await this.orderService.update(+id, updateOrderDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateOrderDto: any, @Req() req: Request) {
+    const updatedOrder = await this.orderService.update(id, updateOrderDto, req.user.uid);
+
+    if (!updatedOrder) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { msg: 'Order updated successfully', updatedOrder };
   }
 
   @Delete(':id')

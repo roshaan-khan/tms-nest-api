@@ -28,8 +28,10 @@ export class EmployeeController {
   async findAll(@Req() req: Request) {
     const offset = Number(req.query.offSet) || 10;
     const page = Number(req.query.page) || 1;
-    const skip = offset * page - offset;
-    const { employees, total } = await this.employeeService.findAll({ employeeOf: new Types.ObjectId(req.user.uid) }, offset, skip);
+    const context = { offset, page }
+    const query = { employeeOf: new Types.ObjectId(req.user.uid) }
+
+    const { employees, total } = await this.employeeService.findAll(query, context);
     return { msg: '', data: employees, total }
   }
 
