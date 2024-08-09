@@ -9,6 +9,7 @@ import { EmployeeModule } from './modules/employee/employee.module';
 import { OrderModule } from './modules/order/order.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { StockModule } from './modules/stock/stock.module';
 
 @Global()
 @Module({
@@ -20,6 +21,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     EmployeeModule,
     OrderModule,
     CustomerModule,
+    StockModule,
   ],
   controllers: [AppController],
   providers: [AppService],
