@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { eClothType } from 'src/types/common.enum';
 import { COLLECTION } from './collectionNames';
+import { User } from './user.schema';
 
 export type CustomerDocument = HydratedDocument<Customer>;
 
@@ -35,7 +36,7 @@ export class Customer {
   @Prop({ type: Size, required: true })
   sizes: Size;
 
-  @Prop({ type: Types.ObjectId, ref: COLLECTION.USER, required: true })
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user: Types.ObjectId;
 }
 

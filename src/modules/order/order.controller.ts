@@ -16,7 +16,7 @@ export class OrderController {
   async create(@Body() createOrderDto: Order, @Req() req: Request) {
     createOrderDto.user = new Types.ObjectId(req.user.uid);
     const order = await this.orderService.create(createOrderDto);
-    return { msg: 'Order created successfully', order };
+    return { msg: 'Order created successfully', data: order };
   }
 
   @Get()
@@ -26,12 +26,20 @@ export class OrderController {
     const page = Number(req.query.page) || 1;
 
     const query = status ? { status } : {};
-    return await this.orderService.findAll(query, { offset, page });
+    const { total, orders } =  await this.orderService.findAll(query, { offset, page });
+
+    return { data: orders, total };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.orderService.findOne(id);
+    const order = await this.orderService.findOne(id);
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { data: order };
   }
 
   @Put(':id')

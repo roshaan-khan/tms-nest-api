@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { eSalaryType } from 'src/types/common.enum';
 import { COLLECTION } from './collectionNames';
+import { User } from './user.schema';
 
 export type EmployeeDocument = HydratedDocument<Employee>;
 
@@ -25,7 +26,7 @@ export class Employee {
     @Prop({ enum: Object.values(eSalaryType), required: true })
     salaryType: string;
     
-    @Prop({ type: Types.ObjectId, ref: COLLECTION.USER, required: true })
+    @Prop({ type: Types.ObjectId, ref: User.name, required: true })
     employeeOf: Types.ObjectId;
 }
 

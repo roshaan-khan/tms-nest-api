@@ -63,7 +63,7 @@ export class OrderService {
     const skip = offset * page - offset;
 
     const [orders, total] = await Promise.all([
-      this.orderModel.find(filter).limit(offset).skip(skip).lean(),
+      this.orderModel.find(filter).limit(offset).skip(skip).populate([{ path: 'customer', select: ['name', 'phone'] }, { path: 'assignedLabor', select: ['name'] }]).lean(),
       this.orderModel.countDocuments(filter)
     ]);
 
@@ -71,7 +71,7 @@ export class OrderService {
   }
 
   async findOne(id: string) {
-    return await this.orderModel.findById(id);
+    return await this.orderModel.findById(id).populate([{ path: 'customer', select: ['name', 'phone'] }, { path: 'assignedLabor', select: ['name'] },{ path: 'stocks', select: { user: 0, createdAt: 0, updatedAt: 0, __v: 0} }]);
   }
 
   async update(id: string, updateOrderDto: Order, userId: string) {

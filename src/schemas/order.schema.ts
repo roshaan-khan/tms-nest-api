@@ -2,6 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { eClothType, eOrderStatus, eSalaryType } from 'src/types/common.enum';
 import { COLLECTION } from './collectionNames';
+import { Customer } from './customer.schema';
+import { Employee } from './employee.schema';
+import { User } from './user.schema';
+import { Stock } from './stock.schema';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -31,7 +35,7 @@ export class Order {
     @Prop({ required: true, default: eOrderStatus.PENDING, enum: Object.values(eOrderStatus) })
     status: string;
 
-    @Prop({ type: Types.ObjectId, required: true, ref: COLLECTION.CUSTOMER })
+    @Prop({ type: Types.ObjectId, required: true, ref: Customer.name })
     customer: Types.ObjectId;
 
     @Prop({ type: Array<string>, required: false, default: [] })
@@ -49,13 +53,13 @@ export class Order {
     @Prop({ type: Number, required: false, default: 0 })
     advance_amount: number;
 
-    @Prop({ type: Types.ObjectId, required: true, ref: COLLECTION.EMPLOYEE })
+    @Prop({ type: Types.ObjectId, required: true, ref: Employee.name })
     assignedLabor: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, required: true, ref: COLLECTION.USER })
+    @Prop({ type: Types.ObjectId, required: true, ref: User.name })
     user: Types.ObjectId;
 
-    @Prop({ type: Array<Types.ObjectId>, required: false, ref: COLLECTION.STOCK, default: [] })
+    @Prop({ type: Array<Types.ObjectId>, required: false, ref: Stock.name, default: [] })
     stocks: Array<Types.ObjectId>;
 
     @Prop({ type: Number, required: true, default: 0 })
