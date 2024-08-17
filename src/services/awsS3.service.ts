@@ -14,7 +14,7 @@ let limits = {
     fileSize: 5 * 1024 * 1024, // (replace MBs allowed with your desires)
 };
 
-class S3Service  {
+export class S3Service  {
     private AWS_ACCESS_KEY: string = process.env["AWS_ACCESS_KEY_ID"] || "";
     private AWS_SECRET_ACCESS_KEY = process.env["AWS_SECRET_ACCESS_KEY"] || ""
     private AWS_S3_BUCKET_NAME = process.env["AWS_S3_BUCKET_NAME"] || ""
@@ -31,7 +31,7 @@ class S3Service  {
         
     }
 
-  private s3URL =`https://${this.AWS_S3_BUCKET_NAME}.s3.${this.AWS_S3_REGION}.amazonaws.com`;
+  public s3URL =`https://${this.AWS_S3_BUCKET_NAME}.s3.${this.AWS_S3_REGION}.amazonaws.com`;
 
   upload = (folderName: eS3AssetsFolder) => multer({
     limits,
@@ -78,4 +78,3 @@ class S3Service  {
   }
 }
 
-export default S3Service;

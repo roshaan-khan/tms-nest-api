@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
 import { Request } from 'express';
 
 @UseGuards(JwtAuthGuard)
-@Controller('employee')
+@Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
   private readonly ModuleName = 'Employee'

@@ -15,11 +15,20 @@ class Utils {
     generateRandomNumber = (min: number, max: number) => randomInt(min, max);
 
     generateS3FileName = (req: Request, folderName: string) => {
-      if (folderName === eS3AssetsFolder.USER_PROFILE) {
-      	return req.user?.uid;
-      }
-      return Date.now();
+        if (folderName === eS3AssetsFolder.USER_PROFILE) {
+            return req.user?.uid;
+        }
+        return Date.now();
     }
+
+    generateStockCode = (category: string, count: number) => {
+        const charCode = category.slice(0, 2).toUpperCase();
+        const countNumber = count.toString().padStart(4, "0");
+
+        const code = `${charCode}${countNumber}`;
+
+        return code;
+    };
 }
 
 export default new Utils();
