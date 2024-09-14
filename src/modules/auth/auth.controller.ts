@@ -11,9 +11,9 @@ export class AuthController {
 
     @Post('login')
     @UsePipes(new JoiValidationPipe(loginUserSchema))
-    async login(@Body() user: User) {
-        const { phone, password } = user
-        const check = await this.authService.validateUser(phone, password);
+    async login(@Body() user: any) {
+        const { emailOrPhone, password } = user
+        const check = await this.authService.validateUser(emailOrPhone, password);
 
         if (!check) {
             throw new NotFoundException('User not found');

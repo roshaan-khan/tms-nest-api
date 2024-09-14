@@ -13,13 +13,10 @@ export class User {
     name: string;
 
     @Prop({ required: true })
-    businessName: string;
-    
-    @Prop({ default: null })
-    businessLogo: string;
+    email: string;
 
     @Prop({ default: null })
-    email: string;
+    profilePicture: string;
 
     @Prop({ required: true })
     phone: string;
@@ -27,17 +24,8 @@ export class User {
     @Prop({ required: true })
     password: string;
 
-    @Prop({ default: true })
-    isActive: boolean;
-    
-    @Prop({ default: null })
-    country: string;
-
-    @Prop({ default: null })
-    state: string;
-
-    @Prop({ default: null })
-    city: string;
+    // @Prop({ default: true })
+    // isActive: boolean;   
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

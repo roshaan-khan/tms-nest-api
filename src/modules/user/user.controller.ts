@@ -8,7 +8,7 @@ import { Request } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get("/getUser")
+  @Get("")
   async find(@Req() req: Request) {
     const user = await this.userService.findOne({ _id: req.user.uid });
     return { msg: '', data: user }

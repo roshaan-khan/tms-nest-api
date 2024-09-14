@@ -5,9 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
-import { EmployeeModule } from './modules/employee/employee.module';
-import { OrderModule } from './modules/order/order.module';
-import { CustomerModule } from './modules/customer/customer.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Global()
@@ -17,9 +14,6 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     MongooseModule.forRoot(process.env.MONGODB_URI),
     UserModule,
     AuthModule,
-    EmployeeModule,
-    OrderModule,
-    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

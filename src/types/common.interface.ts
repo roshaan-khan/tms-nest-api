@@ -1,4 +1,8 @@
-export interface IContext {
-    offset: number;
-    page: number;
+import { Types } from "mongoose";
+
+export interface IPayload {
+    uid: Types.ObjectId;
+    email: string;
+    phone: string;
+    name: string;
 }
